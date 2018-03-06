@@ -41,6 +41,12 @@ russian_post_retriever = posts_retriever('musicblogs', 'posts.446998987295244185
 var express = require('express');
 var app = express();
 
+app.all('/*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
+
 app.get('/romanian', function(req, res) {
     romanian_post_retriever( function(docs) {
         res.json(docs)
@@ -61,6 +67,7 @@ app.get('/polish', function(req, res) {
 
 app.get('/italian', function(req, res) {
     italian_post_retriever( function(docs) {
+        res
         res.json(docs)
     })
 });
@@ -83,6 +90,6 @@ app.get('/easteurope', function(req, res) {
     })
 });
 
-app.listen(3000, function() {
+app.listen(3001, function() {
     console.log('Example app listening on port 3000!')
 })
