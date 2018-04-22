@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
+var _ = require('underscore')
 
 
 
@@ -11,12 +12,19 @@ var posts_retriever = function(dbName, collectionName) {
 
             const db = client.db(dbName);
             const collection = db.collection(collectionName);
+            collection.find().sort({title : 1}).toArray(function (err, docs) {
 
-            collection.find({}).toArray(function (err, docs) {
+                var all_label_map = new Map()
+                _.each (docs, function(doc) {
+                    let labels = doc["labels"]
+                    _.each(labels, function(label) {
 
-                console.log("Found the following records");
-                console.log(docs)
-                callback(docs);
+                        all_label_map.set(label, (all_label_map.get(label) || 0) + 1 )
+                    })
+                })
+
+                let result = {"docs" : docs, "all_labels" : all_labels, "all_labels_map" : all_label_map}
+                callback(result);
             });
         });
 
@@ -54,7 +62,7 @@ app.get('/romanian', function(req, res) {
 });
 
 app.get('/russian', function(req, res) {
-    russian_post_retriever( function(docs) {
+    russian_post_retriever( function(docs,) {
         res.json(docs)
     })
 });
@@ -67,14 +75,13 @@ app.get('/polish', function(req, res) {
 
 app.get('/italian', function(req, res) {
     italian_post_retriever( function(docs) {
-        res
         res.json(docs)
     })
 });
 
 app.get('/southslavic', function(req, res) {
-    southslavic_post_retriever( function(docs) {
-        res.json(docs)
+    southslavic_post_retriever( function(docs, all_labels) {
+        res.json(docs, all_labels)
     })
 });
 
@@ -91,5 +98,5 @@ app.get('/easteurope', function(req, res) {
 });
 
 app.listen(3001, function() {
-    console.log('Example app listening on port 3000!')
+    console.log('Example app listening on port 3001!')
 })
