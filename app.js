@@ -2,34 +2,32 @@ const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 var _ = require('underscore')
 
-
-
 var posts_retriever = function(dbName, collectionName) {
 
     return function(callback) {
-
         MongoClient.connect(url, function(err, client) {
-
             const db = client.db(dbName);
             const collection = db.collection(collectionName);
             collection.find().sort({title : 1}).toArray(function (err, docs) {
-
                 var all_label_map = new Map()
                 _.each (docs, function(doc) {
                     let labels = doc["labels"]
                     _.each(labels, function(label) {
-
                         all_label_map.set(label, (all_label_map.get(label) || 0) + 1 )
                     })
                 })
+                var labels = []
+                all_label_map.forEach(function (value, key, map) {
+                    labels.push([key, value])
+                })
+                labels.sort(function compare(a, b) {
+                    return a[0] < b[0];
+                })
 
-                let result = {"docs" : docs, "all_labels" : all_labels, "all_labels_map" : all_label_map}
+                let result = {"posts" : docs,  "labels" : labels}
                 callback(result);
             });
         });
-
-        // Get the documents collection
-        // Find some documents
     }
 }
 
@@ -40,10 +38,6 @@ southslavic_post_retriever = posts_retriever('musicblogs', 'posts.55690176072318
 easterneurope_post_retriever = posts_retriever('musicblogs', 'posts.4061164319975225752')
 french_post_retriever = posts_retriever('musicblogs', 'posts.2775451793153626665')
 russian_post_retriever = posts_retriever('musicblogs', 'posts.446998987295244185')
-
-
-// Connection URL
-
 
 
 var express = require('express');
@@ -62,7 +56,7 @@ app.get('/romanian', function(req, res) {
 });
 
 app.get('/russian', function(req, res) {
-    russian_post_retriever( function(docs,) {
+    russian_post_retriever( function(docs) {
         res.json(docs)
     })
 });
