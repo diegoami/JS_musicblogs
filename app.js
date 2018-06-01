@@ -74,8 +74,8 @@ app.get('/italian', function(req, res) {
 });
 
 app.get('/southslavic', function(req, res) {
-    southslavic_post_retriever( function(docs, all_labels) {
-        res.json(docs, all_labels)
+    southslavic_post_retriever( function(docs) {
+        res.json(docs)
     })
 });
 
