@@ -9,8 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apm": "^1.0.2",
+    "bson": "^2.0.7",
     "express": "^4.16.2",
     "mongodb": "^3.0.3",
+    "mongodb-core": "^3.0.9",
+    "require_optional": "^1.0.1",
     "underscore": "^1.9.0"
   }
 }
