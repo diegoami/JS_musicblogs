@@ -2,7 +2,7 @@ const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 var _ = require('underscore')
 
-var posts_retriever = function(dbName, collectionName) {
+var posts_retriever = function(dbName, collectionName, add_label_flag) {
 
     return function(callback) {
         MongoClient.connect(url, function(err, client) {
@@ -13,8 +13,19 @@ var posts_retriever = function(dbName, collectionName) {
                 _.each (docs, function(doc) {
                     let labels = doc["labels"]
                     _.each(labels, function(label) {
+
                         all_label_map.set(label, (all_label_map.get(label) || 0) + 1 )
+                        if (add_label_flag) {
+                            if (label != 'subtitled' && label != 'SUBTITLED') {
+                                let spl_label = label.split('/')
+                                if (spl_label.length > 1) {
+                                    doc["title"] = doc["title"] +' - '+ spl_label[1]
+                                }
+                            }
+
+                        }
                     })
+
                 })
                 var labels = []
                 all_label_map.forEach(function (value, key, map) {
@@ -37,7 +48,7 @@ polish_post_retriever = posts_retriever('musicblogs', 'posts.59695003203290655')
 southslavic_post_retriever = posts_retriever('musicblogs', 'posts.556901760723185848')
 easterneurope_post_retriever = posts_retriever('musicblogs', 'posts.4061164319975225752')
 french_post_retriever = posts_retriever('musicblogs', 'posts.2775451793153626665')
-russian_post_retriever = posts_retriever('musicblogs', 'posts.446998987295244185')
+russian_post_retriever = posts_retriever('musicblogs', 'posts.446998987295244185', true)
 
 
 var express = require('express');
@@ -86,7 +97,7 @@ app.get('/french', function(req, res) {
 });
 
 app.get('/easteurope', function(req, res) {
-    easteurope_post_retriever( function(docs) {
+    easterneurope_post_retriever( function(docs) {
         res.json(docs)
     })
 });
