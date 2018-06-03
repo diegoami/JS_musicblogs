@@ -12,21 +12,29 @@ var posts_retriever = function(dbName, collectionName, add_label_flag) {
                 var all_label_map = new Map()
                 _.each (docs, function(doc) {
                     doc["subtitled"] = false
+                    doc["content"] = doc["content"].replace(/\n\s*\n/g, '\n')
+                    let rows = doc["content"].split('\n')
+                    rows = _.filter(rows, (row) => {return row.length > 0})
+                    doc["content"] = rows.join('\n')
+                    if (doc["content"].trim().length == 0 ) {
+                        doc["content"] = "No lyrics..."
+                    }
                     let labels = doc["labels"]
                     _.each(labels, function(label) {
 
                         all_label_map.set(label, (all_label_map.get(label) || 0) + 1 )
-                        if (add_label_flag) {
-                            if (label != 'subtitled' && label != 'SUBTITLED') {
+                        if (label != 'subtitled' && label != 'SUBTITLED') {
+                            if (add_label_flag) {
                                 let spl_label = label.split('/')
                                 if (spl_label.length > 1) {
-                                    doc["title"] = doc["title"] +' - '+ spl_label[1]
+                                    doc["title"] = doc["title"] + ' - ' + spl_label[1]
                                 }
-                            } else {
-                                doc["subtitled"] = true
                             }
-
+                        } else {
+                            doc["subtitled"] = true
                         }
+
+
                     })
 
                 })
