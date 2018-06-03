@@ -11,6 +11,7 @@ var posts_retriever = function(dbName, collectionName, add_label_flag) {
             collection.find().sort({title : 1}).toArray(function (err, docs) {
                 var all_label_map = new Map()
                 _.each (docs, function(doc) {
+                    doc["subtitled"] = false
                     let labels = doc["labels"]
                     _.each(labels, function(label) {
 
@@ -21,6 +22,8 @@ var posts_retriever = function(dbName, collectionName, add_label_flag) {
                                 if (spl_label.length > 1) {
                                     doc["title"] = doc["title"] +' - '+ spl_label[1]
                                 }
+                            } else {
+                                doc["subtitled"] = true
                             }
 
                         }
