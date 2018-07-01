@@ -1,3 +1,9 @@
 ## EURO POP LYRICS
 
-Back end for the web site http://18.185.30.140 (Euro pop lyrics)
+Back end for the web site http://www.europoplyrics.com
+
+Frontend : https://github.com/diegoami/JS_FE_musicblogs
+
+Backend : https://github.com/diegoami/JS_musicblogs
+
+Database scripts : https://github.com/diegoami/musicblogs-scripts-PY
