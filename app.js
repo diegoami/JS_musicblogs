@@ -2,6 +2,26 @@ const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 var _ = require('underscore')
 
+
+var convert_subtitles = function(subtitles_srt) {
+    let subtitles_lines = subtitles_srt.split('\r\n')
+    let subtitles_objs = []
+    var line_status = 0;
+    for (i = 0; i < subtitles_lines.length; i += 4) {
+        if (i + 2 < subtitles_lines.length) {
+            subtitle_obj = {};
+            let time_span = subtitles_lines[i+1];
+            let timespans = time_span.split('-->')
+            subtitle_obj["px_start"] = timespans[0].trim().substr(6).replace(",","") / 1000;
+            subtitle_obj["px_end"] = timespans[1].trim().substr(6).replace(",","") / 1000;
+
+            subtitle_obj["text"] = subtitles_lines[i+2];
+            subtitles_objs.push(subtitle_obj);
+        }
+    }
+    return subtitles_objs;
+}
+
 var posts_retriever = function(dbName, postsCollectionName, subtitlesCollectionName, add_label_flag) {
 
     return function(callback) {
@@ -36,6 +56,14 @@ var posts_retriever = function(dbName, postsCollectionName, subtitlesCollectionN
                                 }
                             } else {
                                 doc["subtitled"] = true
+                                let arama_info = _.where(subtitles, {"video_url" : doc['videoId']})
+                                if (arama_info.length > 0) {
+                                    doc["arama_info"] = arama_info[0]
+                                    let subtitles_srt = doc["arama_info"]["subtitles"]
+                                    let subtitles_objs = convert_subtitles(subtitles_srt)
+                                    doc["subtitles_objs"] = subtitles_objs
+                                }
+
                             }
                         })
                     })
@@ -48,7 +76,7 @@ var posts_retriever = function(dbName, postsCollectionName, subtitlesCollectionN
                     })
 
 
-                    let result = {"posts": docs, "labels": labels, "subtitles" : subtitles}
+                    let result = {"posts": docs, "labels": labels}
                     callback(result);
                 });
             });
