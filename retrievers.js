@@ -35,7 +35,7 @@ var convert_subtitles = function(subtitles_srt) {
     return subtitles_objs;
 }
 
-var posts_retriever = function(dbName, postsCollectionName, subtitlesCollectionName, add_label_flag) {
+var retrievers = function(dbName, postsCollectionName, subtitlesCollectionName, add_label_flag) {
 
     return function(callback) {
         MongoClient.connect(url, function(err, client) {
@@ -97,6 +97,15 @@ var posts_retriever = function(dbName, postsCollectionName, subtitlesCollectionN
     }
 }
 
-module.exports = posts_retriever
+
+module.exports = {
+    romanian_post_retriever : retrievers('musicblogs', 'posts.8277328596134486858', 'subtitles.8277328596134486858'),
+    italian_post_retriever : retrievers('musicblogs', 'posts.6377950492326759990', 'subtitles.6377950492326759990'),
+    polish_post_retriever : retrievers('musicblogs', 'posts.59695003203290655', 'subtitles.59695003203290655'),
+    southslavic_post_retriever : retrievers('musicblogs', 'posts.556901760723185848', 'subtitles.556901760723185848'),
+    easterneurope_post_retriever : retrievers('musicblogs', 'posts.4061164319975225752', 'subtitles.4061164319975225752'),
+    french_post_retriever : retrievers('musicblogs', 'posts.2775451793153626665', 'subtitles.2775451793153626665'),
+    russian_post_retriever : retrievers('musicblogs', 'posts.446998987295244185','subtitles.446998987295244185', true)
+}
 
 
