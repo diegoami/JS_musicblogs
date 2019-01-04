@@ -9,67 +9,41 @@ test_semaphore = function(semaphore) {
     }
 }
 
-retrievers.romanian_post_retriever( function(docs) {
-    fs.writeFile('json/romanian.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/romanian.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
+var write_function = function(file_name) {
+    return function(docs) {
+        fs.writeFile(file_name, JSON.stringify(docs), (err) => {
+            if (err) throw err;
+            console.log('The file '+file_name + ' has been saved');
+            semaphore += 1
+            test_semaphore(semaphore)
+        });
+    }
+}
 
-})
+retrievers.romanian_post_retriever(
+    write_function('json/romanian.json')
+)
 
-retrievers.russian_post_retriever( function(docs) {
-    fs.writeFile('json/russian.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/russian.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
+retrievers.russian_post_retriever(
+    write_function('json/russian.json')
+)
 
-})
+retrievers.polish_post_retriever(
+    write_function('json/polish.json')
+)
 
-retrievers.french_post_retriever( function(docs) {
-    fs.writeFile('json/french.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/french.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
-})
+retrievers.french_post_retriever(
+    write_function('json/french.json')
+)
 
-retrievers.polish_post_retriever( function(docs) {
-    fs.writeFile('json/polish.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/polish.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
-})
+retrievers.southslavic_post_retriever(
+    write_function('json/southslavic.json')
+)
 
-retrievers.southslavic_post_retriever( function(docs) {
-    fs.writeFile('json/southslavic.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/southslavic.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
-})
+retrievers.easterneurope_post_retriever(
+    write_function('json/easterneurope.json')
+)
 
-retrievers.easterneurope_post_retriever( function(docs) {
-    fs.writeFile('json/easterneurope.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/easterneurope.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
-})
-
-retrievers.italian_post_retriever( function(docs) {
-    fs.writeFile('json/italian.json', JSON.stringify(docs), (err) => {
-        if (err) throw err;
-        console.log('The file json/italian.json has been saved');
-        semaphore += 1
-        test_semaphore(semaphore)
-    });
-})
+retrievers.italian_post_retriever(
+    write_function('json/italian.json')
+)
