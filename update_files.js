@@ -41,7 +41,7 @@ retrievers.southslavic_post_retriever(
 )
 
 retrievers.easterneurope_post_retriever(
-    write_function('json/easterneurope.json')
+    write_function('json/easteurope.json')
 )
 
 retrievers.italian_post_retriever(
