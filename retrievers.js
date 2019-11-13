@@ -69,9 +69,11 @@ var retrievers = function(dbName, postsCollectionName, subtitlesCollectionName, 
                                 }
                             } else {
                                 doc["subtitled"] = true
-                                let arama_info = _.where(subtitles, {"video_url" : doc['videoId']})
-                                if (arama_info.length > 0) {
-                                    doc["arama_info"] = arama_info[0]
+                                let arama_infos = _.where(subtitles, {"video_url" : doc['videoId']})
+
+                                if (arama_infos.length > 0) {
+                                    let arama_info = _.max(arama_infos, function(arama_info) {return "version_number" in arama_info ?  arama_info["version_number"] : 0})
+                                    doc["arama_info"] = arama_info
                                     let subtitles_srt = doc["arama_info"]["subtitles"]
                                     let subtitles_objs = convert_subtitles(subtitles_srt)
                                     doc["subtitles_objs"] = subtitles_objs
