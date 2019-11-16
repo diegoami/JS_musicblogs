@@ -77,7 +77,10 @@ var retrievers = function(dbName, postsCollectionName, subtitlesCollectionName, 
                                     let subtitles_srt = doc["arama_info"]["subtitles"]
                                     let subtitles_objs = convert_subtitles(subtitles_srt)
                                     doc["subtitles_objs"] = subtitles_objs
+                                    let cont_from_subtitles = _.map(subtitles_objs, function(s) {return s["text"]}).join("\n")
+                                    doc["content"] = cont_from_subtitles
                                 }
+
 
                             }
                         })
