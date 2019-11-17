@@ -16,22 +16,36 @@ var convert_subtitles = function(subtitles_srt) {
     let subtitles_lines = subtitles_srt.split('\r\n');
     let subtitles_objs = [];
     var line_status = 0;
-    for (i = 0; i < subtitles_lines.length; i += 4) {
-        if (i + 2 < subtitles_lines.length) {
-            subtitle_obj = {};
-            let time_span = subtitles_lines[i+1];
-            let timespans = time_span.split('-->')
-            subtitle_obj["px_start"] = convert_to_time(timespans[0]);
-            if (timespans.length > 0 && timespans[1] ) {
-                subtitle_obj["px_end"] = convert_to_time(timespans[1]);
-            } else {
-                subtitle_obj["px_end"] = 1000
+    var index = 0;
+    var subtitle_index = 1;
+    var done = false;
+    var next_state = 0;
+    while (index < subtitles_lines.length) {
+        var current_subtitle = subtitles_lines[index];
+        if (next_state == 0) {
+            if (current_subtitle == subtitle_index) {
+                subtitle_index += 1;
+                next_state = 1;
+                var subtitle_obj = {};
             }
-
-            subtitle_obj["text"] = subtitles_lines[i+2];
-            subtitles_objs.push(subtitle_obj);
+        } else if (next_state == 1) {
+            if (current_subtitle.includes('-->')) {
+                let timespans = current_subtitle.split('-->')
+                subtitle_obj["px_start"] = convert_to_time(timespans[0]);
+                subtitle_obj["px_end"] = convert_to_time(timespans[1]);
+                next_state = 2
+            }
+        } else if (next_state == 2) {
+            if (current_subtitle) {
+                subtitle_obj["text"] = current_subtitle;
+                next_state = 0;
+                subtitles_objs.push(subtitle_obj);
+            }
         }
+        index += 1;
+
     }
+
     return subtitles_objs;
 }
 
